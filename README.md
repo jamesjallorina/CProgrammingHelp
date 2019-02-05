@@ -1,2 +1,3 @@
 # CProgrammingHelp
-This is a speed fast development //disclaimer this code is not optimized 
+## sources are referenced from facebook C Programming Group
+This is speed coding //disclaimer this code is not optimized 
