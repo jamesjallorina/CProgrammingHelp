@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <sys/types.h>
 #include <sys/ipc.h>
@@ -9,32 +10,39 @@
 
 #define SHMSZ 27
 #define mailbox_key 1432
+#define MAXLEN 4024
 
 int mailbox_locate(const key_t key);
-char *mailbox_attach(const int shmid);
+struct sharedmsg *mailbox_attach(const int shmid);
 
+struct sharedmsg{
+	unsigned int forcednumber;
+	char msg[MAXLEN + 1];
+};
+
+#define SHAREDMSG_SZ sizeof(struct sharedmsg)
 
 struct mailbox{
 	int shmid;
 	char *msg;
-	char sharedmsg[4024 + 1];   //pass 4kb of data
+	struct sharedmsg *data;   //pass 4kb of data
 };
-
 
 
 int main(int argc, char **argv)
 {
+	
 	char c;
 	struct mailbox mb;
 	struct mailbox *p = &mb;
+	struct sharedmsg *msg;
 
 	p->shmid = mailbox_locate(mailbox_key);
-	p->msg = mailbox_attach(p->shmid);
-
-	for(;*(p->msg) != '\0'; p->msg++)
-		putchar(*(p->msg));
-	putchar('\n');
-	*(p->msg) = '*';
+	msg = mailbox_attach(p->shmid);
+	
+	
+       	printf("read from sharedmemory | forcednumber: %d\n", msg->forcednumber);
+	printf("read from shared memory | msg: %s\n", msg->msg);	
 	return 0;	
 }
 
@@ -51,11 +59,11 @@ int mailbox_locate(const key_t key)
 }
 
 
-char *mailbox_attach(const int shmid)
+struct sharedmsg *mailbox_attach(const int shmid)
 {
-	char *shm;
+	static struct sharedmsg *shm;
 
-	if((shm = shmat(shmid, NULL, 0)) == (char *) -1){
+	if((shm = (struct sharedmsg *)shmat(shmid, NULL, 0)) == (struct sharedmsg *) -1){
 		perror("shmat");
 		exit(1);
 	}
