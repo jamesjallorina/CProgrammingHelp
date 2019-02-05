@@ -8,7 +8,6 @@
 #include <unistd.h>
 
 
-#define SHMSZ 27
 #define mailbox_key 1432
 #define MAXLEN 4024
 
@@ -51,7 +50,7 @@ int mailbox_locate(const key_t key)
 {
 	int shmid = 0;
 
-	if((shmid =shmget(key, SHMSZ, 0666)) <  0){
+	if((shmid =shmget(key, SHAREDMSG_SZ, 0666)) <  0){
 		perror("shmget");
 		exit(1);
 	}

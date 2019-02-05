@@ -8,7 +8,6 @@
 #include <unistd.h>
 
 
-#define SHMSZ 27
 #define mailbox_key 1432
 #define MAXLEN 4024
 
@@ -99,7 +98,7 @@ int mailbox_create(const key_t key)
 	/*
 	 * create segment
 	 */
-	if((shmid = shmget(key, SHMSZ, IPC_CREAT | 0666 )) < 0){
+	if((shmid = shmget(key, SHAREDMSG_SZ, IPC_CREAT | 0666 )) < 0){
 		perror("shmat");
 		exit(1);
 	}
