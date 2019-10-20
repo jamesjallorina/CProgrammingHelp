@@ -39,7 +39,7 @@ int main(int argc, char **argv)
 	unsigned int forcednumber = 0;
 	struct mailbox *p = &mb;
 	
-	if(argc < 1)
+	if(argc < 2)
 	{
 		usage();
 		exit(1);
